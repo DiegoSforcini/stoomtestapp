@@ -1,3 +1,217 @@
-<div *ngFor="let address of addresses">
-  <div>{{address.streetName}}</div>
+<link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css">
+<hr>
+<div class="container bootstrap snippets bootdey" id="main-content">
+  <div class="row">
+    <div class="col-md-6 mb-10">
+      <button type="button" class="btn btn-success" (click)="onOpenModal('add')">
+        <i class="fa fa-plus-square" aria-hidden="true"></i>
+        &nbsp;
+        <span>Add Address</span>
+      </button>
+    </div>
+    <div class="col-md-6 mb-10">
+      <input type="text" class="form-control" placeholder="Type here to search address..." name="key" #key="ngModel" ngModel (ngModelChange)="searchAddress(key.value)">
+    </div>
+    <div class="col-lg-12">
+      <div class="main-box no-header clearfix">
+        <div class="main-box-body clearfix">
+          <div class="table-responsive">
+            <table class="table user-list">
+              <thead>
+              <tr>
+                <th><span>Street Name</span></th>
+                <th><span>City</span></th>
+                <th class="text-center"><span>State</span></th>
+                <th><span>Country</span></th>
+                <th>&nbsp;</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="addresses.length >= 1">
+              <tr *ngFor="let address of addresses">
+                <td>
+                  <a href="#" class="user-link">{{address.streetName}}</a>
+                </td>
+                <td>{{address.city}}</td>
+                <td class="text-center">
+                  <span class="label label-default">{{address.state}}</span>
+                </td>
+                <td>{{address.country}}</td>
+                <td style="width: 20%;">
+                  <a href="#" class="table-link text-info" (click)="onOpenModal('edit', address)">
+                    <span class="fa-stack">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                  <a href="#" class="table-link danger" (click)="onOpenModal('delete', address)">
+                    <span class="fa-stack">
+                        <i class="fa fa-square fa-stack-2x"></i>
+                        <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                    </span>
+                  </a>
+                </td>
+              </tr>
+              </tbody>
+              <tbody *ngIf="!addresses || addresses.length === 0">
+              <tr>
+                <td colspan="5" class="text-center">Nenhum endereço encontrado!</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--Add Address Modal-->
+<div class="modal fade" id="addAddressModal" tabindex="-1" aria-labelledby="addAddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form #addForm="ngForm" (ngSubmit)="onAddAddress(addForm)">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addAddressModalLabel">Add Address</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12 form-group">
+              <label for="txtAddStreetName">Street Name*</label>
+              <input type="text" class="form-control" id="txtAddStreetName" ngModel name="streetName" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddNumber">Number*</label>
+              <input type="text" class="form-control" id="txtAddNumber" ngModel name="number" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddComplement">Complement</label>
+              <input type="text" class="form-control" id="txtAddComplement" ngModel name="complement">
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddNeighborhood">Neighborhood*</label>
+              <input type="text" class="form-control" id="txtAddNeighborhood" ngModel name="neighbourhood" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddCity">City*</label>
+              <input type="text" class="form-control" id="txtAddCity" ngModel name="city" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddState">State*</label>
+              <input type="text" class="form-control" id="txtAddState" ngModel name="state" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddCountry">Country*</label>
+              <input type="text" class="form-control" id="txtAddCountry" ngModel name="country" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddZipcode">Zipcode*</label>
+              <input type="text" class="form-control" id="txtAddZipcode" ngModel name="zipcode" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddLatitude">Latitude</label>
+              <input type="text" class="form-control" id="txtAddLatitude" ngModel name="latitude">
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtAddLongitude">Longitude</label>
+              <input type="text" class="form-control" id="txtAddLongitude" ngModel name="longitude">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeAddModal">Close</button>
+          <button [disabled]="addForm.invalid" type="submit" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!--Edit Address Modal-->
+<div class="modal fade" id="editAddressModal" tabindex="-1" aria-labelledby="editAddressModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <form #editForm="ngForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editAddressModalLabel">Edit Address</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="row">
+            <input type="hidden" ngModel="{{editAddress?.id}}" name="id">
+            <div class="col-md-12 form-group">
+              <label for="txtEditStreetName">Street Name*</label>
+              <input type="text" class="form-control" id="txtEditStreetName" ngModel="{{editAddress?.streetName}}" name="streetName" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditNumber">Number*</label>
+              <input type="text" class="form-control" id="txtEditNumber" ngModel="{{editAddress?.number}}" name="number" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditComplement">Complement</label>
+              <input type="text" class="form-control" id="txtEditComplement" ngModel="{{editAddress?.complement}}" name="complement">
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditNeighborhood">Neighborhood*</label>
+              <input type="text" class="form-control" id="txtEditNeighborhood" ngModel="{{editAddress?.neighbourhood}}" name="neighbourhood" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditCity">City*</label>
+              <input type="text" class="form-control" id="txtEditCity" ngModel="{{editAddress?.city}}" name="city" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditState">State*</label>
+              <input type="text" class="form-control" id="txtEditState" ngModel="{{editAddress?.state}}" name="state" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditCountry">Country*</label>
+              <input type="text" class="form-control" id="txtEditCountry" ngModel="{{editAddress?.country}}" name="country" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditZipcode">Zipcode*</label>
+              <input type="text" class="form-control" id="txtEditZipcode" ngModel="{{editAddress?.zipcode}}" name="zipcode" required>
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditLatitude">Latitude</label>
+              <input type="text" class="form-control" id="txtEditLatitude" ngModel="{{editAddress?.latitude}}" name="latitude">
+            </div>
+            <div class="col-md-12 form-group">
+              <label for="txtEditLongitude">Longitude</label>
+              <input type="text" class="form-control" id="txtEditLongitude" ngModel="{{editAddress?.longitude}}" name="longitude">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeEditModal">Close</button>
+          <button [disabled]="editForm.invalid" (click)="onEditAddress(editForm.value)" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!--Remove Address Modal-->
+<div class="modal fade" id="deleteAddressModal" tabindex="-1" aria-labelledby="deleteAddressModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteAddressModalLabel">Delete Address</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete address: {{deleteAddress?.streetName}}?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeDeleteModal">No</button>
+        <button type="button" class="btn btn-danger" (click)="onDeleteAddress(deleteAddress.id)">Yes</button>
+      </div>
+    </div>
+  </div>
 </div>
